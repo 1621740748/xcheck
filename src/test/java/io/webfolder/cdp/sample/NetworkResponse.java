@@ -18,9 +18,9 @@
  */
 package io.webfolder.cdp.sample;
 
-
 import static io.webfolder.cdp.event.Events.NetworkLoadingFinished;
 import static io.webfolder.cdp.event.Events.NetworkResponseReceived;
+import static java.util.Arrays.asList;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,38 +36,46 @@ import io.webfolder.cdp.type.network.ResourceType;
 
 public class NetworkResponse {
 
-    public static void main(String[] args) {
-        
-        Launcher launcher = new Launcher();
+	public static void main(String[] args) {
 
-        Set<String> finished = new HashSet<>();
+		Launcher launcher = new Launcher();
 
-        try (SessionFactory factory = launcher.launch();
-                            Session session = factory.create()) {
-            session.getCommand().getNetwork().enable();
-            session.addEventListener((e, d) -> {
-                if (NetworkLoadingFinished.equals(e)) {
-                    LoadingFinished lf = (LoadingFinished) d;
-                    finished.add(lf.getRequestId());
-                }
-                if (NetworkResponseReceived.equals(e)) {
-                    ResponseReceived rr = (ResponseReceived) d;
-                    Response response = rr.getResponse();
-                    System.out.println("----------------------------------------");
-                    System.out.println("URL       : " + response.getUrl());
-                    System.out.println("Status    : HTTP " + response.getStatus().intValue() + " " + response.getStatusText());
-                    System.out.println("Mime Type : " + response.getMimeType());
-                    if (finished.contains(rr.getRequestId()) && ResourceType.Document.equals(rr.getType())) {
-                        GetResponseBodyResult rb = session.getCommand().getNetwork().getResponseBody(rr.getRequestId());
-                        if ( rb != null ) {
-                            String body = rb.getBody();
-                            System.out.println("Content   : " + body.substring(0, body.length() > 1024 ? 1024 : body.length()));
-                        }
-                    }
-                }
-            });
-            session.navigate("http://cnn.com");
-            session.waitDocumentReady();
-        }
-    }
+		Set<String> finished = new HashSet<>();
+
+		try (SessionFactory factory = launcher
+				.launch(asList(
+						"--headless"
+						, "--disable-gpu", 
+						"--allow-running-insecure-content"));
+				Session session = factory.create()) {
+			session.getCommand().getNetwork().enable();
+			session.addEventListener((e, d) -> {
+				if (NetworkLoadingFinished.equals(e)) {
+					LoadingFinished lf = (LoadingFinished) d;
+					finished.add(lf.getRequestId());
+				}
+				if (NetworkResponseReceived.equals(e)) {
+					ResponseReceived rr = (ResponseReceived) d;
+					Response response = rr.getResponse();
+//					System.out.println("----------------------------------------");
+					System.out.println("URL       : " + response.getUrl());
+//					System.out.println(
+//							"Status    : HTTP " + response.getStatus().intValue() + " " + response.getStatusText());
+//					System.out.println("Mime Type : " + response.getMimeType());
+					if (finished.contains(rr.getRequestId()) && ResourceType.Document.equals(rr.getType())) {
+						GetResponseBodyResult rb = session.getCommand().getNetwork().getResponseBody(rr.getRequestId());
+						if (rb != null) {
+							String body = rb.getBody();
+							// System.out.println("Content : " + body.substring(0, body.length() > 1024 ?
+							// 1024 : body.length()));
+						}
+					}
+				}
+			});
+			session.navigate("https://fund.jrj.com.cn");
+			session.waitDocumentReady();
+		    session.wait(2000);
+		    session.close();
+		}
+	}
 }
