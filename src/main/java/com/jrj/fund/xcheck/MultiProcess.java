@@ -19,6 +19,7 @@
 package com.jrj.fund.xcheck;
 
 import static io.webfolder.cdp.event.Events.NetworkLoadingFinished;
+import static io.webfolder.cdp.event.Events.NetworkRequestWillBeSent;
 import static io.webfolder.cdp.event.Events.NetworkResponseReceived;
 import static io.webfolder.cdp.session.SessionFactory.DEFAULT_PORT;
 import static java.lang.System.getProperty;
@@ -31,67 +32,83 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import io.webfolder.cdp.Launcher;
 import io.webfolder.cdp.event.network.LoadingFinished;
+import io.webfolder.cdp.event.network.RequestWillBeSent;
 import io.webfolder.cdp.event.network.ResponseReceived;
 import io.webfolder.cdp.session.Session;
 import io.webfolder.cdp.session.SessionFactory;
-import io.webfolder.cdp.type.network.ResourceType;
 import io.webfolder.cdp.type.network.Response;
+import io.webfolder.cdp.type.security.MixedContentType;
 
 public class MultiProcess {
 
-    public static void main(String[] args) {
+	public static void main(String[] args) {
 
 		Set<String> finished = new HashSet<>();
-        new Thread() {
+		new Thread() {
 
-            public void run() {
-                Launcher launcher = new Launcher(getFreePort(DEFAULT_PORT));
-                Path remoteProfileData = get(getProperty("java.io.tmpdir")).resolve("remote-profile-" + new Random().nextInt());
-                SessionFactory factory = launcher.launch(asList(
+			public void run() {
+				Launcher launcher = new Launcher(getFreePort(DEFAULT_PORT));
+				Path remoteProfileData = get(getProperty("java.io.tmpdir"))
+						.resolve("remote-profile-" + new Random().nextInt());
+				SessionFactory factory = launcher.launch(asList(
 //                		"--headless",
-                		"--disable-gpu",
-                		"--allow-running-insecure-content",
-                		"--user-data-dir=" + remoteProfileData.toString()));
+						"--disable-gpu", "--allow-running-insecure-content",
+						"--user-data-dir=" + remoteProfileData.toString()));
 
-                try (SessionFactory sf = factory) {
-                    try (Session session = sf.create()) {
-            			session.getCommand().getNetwork().enable();
-            			session.addEventListener((e, d) -> {
-            				if (NetworkLoadingFinished.equals(e)) {
-            					LoadingFinished lf = (LoadingFinished) d;
-            					finished.add(lf.getRequestId());
-            				}
-            				if (NetworkResponseReceived.equals(e)) {
-            					ResponseReceived rr = (ResponseReceived) d;
-            					Response response = rr.getResponse();
-            					if(ResourceType.Script.equals(rr.getType())
-            							||ResourceType.XHR.equals(rr.getType())
-            							||ResourceType.WebSocket.equals(rr.getType())) {
-            						if(response.getUrl().startsWith("http://")) {
-            							System.out.println("URL       : " + response.getUrl());
-            						}
-            					}
-            				}
-            			});
-            			session.navigate("https://fund.jrj.com.cn");
-                        session.waitDocumentReady();
-                        session.wait(3000);
-                    }
-                }
-            }
-         
-        }.start();
-    }
+				try (SessionFactory sf = factory) {
+					try (Session session = sf.create()) {
+						session.getCommand().getNetwork().enable();
+						session.addEventListener((e, d) -> {
+							if (NetworkLoadingFinished.equals(e)) {
+								LoadingFinished lf = (LoadingFinished) d;
+								finished.add(lf.getRequestId());
+							}
+							if (NetworkRequestWillBeSent.equals(e)) {
+								RequestWillBeSent s = (RequestWillBeSent) d;
+								if (MixedContentType.Blockable.equals(s.getRequest().getMixedContentType())) {
+									System.out.println(s.getRequest().getUrl());
+									// System.out.println("--"+s.getDocumentURL());
+									if (s.getInitiator() != null&&s.getInitiator().getUrl()!=null) {
+										System.out.println("--" + s.getInitiator().getUrl());
+									}
+									if (s.getInitiator() != null&&s.getInitiator().getStack()!=null) {
+										System.out.println("--" + s.getInitiator().getStack().getCallFrames().stream()
+												.map(a -> a.getUrl()).collect(Collectors.joining("\n*****")));
+									}
+								}
+							}
+							if (NetworkResponseReceived.equals(e)) {
+								ResponseReceived rr = (ResponseReceived) d;
+								Response response = rr.getResponse();
+//            					if(ResourceType.Script.equals(rr.getType())
+//            							||ResourceType.XHR.equals(rr.getType())
+//            							||ResourceType.WebSocket.equals(rr.getType())) {
+//            						if(response.getUrl().startsWith("http://")) {
+//            							System.out.println("URL       : " + response.getUrl());
+//            						}
+//            					}
+							}
+						});
+						session.navigate("https://fund.jrj.com.cn");
+						session.waitDocumentReady();
+						session.wait(3000);
+					}
+				}
+			}
 
-    protected static int getFreePort(int portNumber) {
-        try (ServerSocket socket = new ServerSocket(portNumber)) {
-            int freePort = socket.getLocalPort();
-            return freePort;
-        } catch (IOException e) {
-            return getFreePort(portNumber + 1);
-        }
-    }
+		}.start();
+	}
+
+	protected static int getFreePort(int portNumber) {
+		try (ServerSocket socket = new ServerSocket(portNumber)) {
+			int freePort = socket.getLocalPort();
+			return freePort;
+		} catch (IOException e) {
+			return getFreePort(portNumber + 1);
+		}
+	}
 }
