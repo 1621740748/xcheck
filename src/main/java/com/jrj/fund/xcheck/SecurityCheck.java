@@ -18,9 +18,6 @@
  */
 package com.jrj.fund.xcheck;
 
-import static io.webfolder.cdp.event.Events.NetworkLoadingFinished;
-import static io.webfolder.cdp.event.Events.NetworkRequestWillBeSent;
-import static io.webfolder.cdp.event.Events.NetworkResponseReceived;
 import static io.webfolder.cdp.session.SessionFactory.DEFAULT_PORT;
 import static java.lang.System.getProperty;
 import static java.nio.file.Paths.get;
@@ -36,15 +33,12 @@ import java.util.stream.Collectors;
 
 import io.webfolder.cdp.Launcher;
 import io.webfolder.cdp.event.Events;
-import io.webfolder.cdp.event.network.LoadingFinished;
-import io.webfolder.cdp.event.network.RequestWillBeSent;
-import io.webfolder.cdp.event.network.ResponseReceived;
+import io.webfolder.cdp.event.security.CertificateError;
+import io.webfolder.cdp.event.security.SecurityStateChanged;
 import io.webfolder.cdp.session.Session;
 import io.webfolder.cdp.session.SessionFactory;
-import io.webfolder.cdp.type.network.Response;
-import io.webfolder.cdp.type.security.MixedContentType;
 
-public class MultiProcess {
+public class SecurityCheck {
 
 	public static void main(String[] args) {
 
@@ -62,39 +56,26 @@ public class MultiProcess {
 
 				try (SessionFactory sf = factory) {
 					try (Session session = sf.create()) {
-						session.getCommand().getNetwork().enable();
+						session.getCommand().getSecurity().enable();
+						session.getCommand().getRuntime().enable();
 						session.addEventListener((e, d) -> {
-							if (Events.NetworkLoadingFinished.equals(e)) {
-								LoadingFinished lf = (LoadingFinished) d;
-								finished.add(lf.getRequestId());
+							if (Events.SecuritySecurityStateChanged.equals(e)) {
+								System.out.println("SecuritySecurityStateChanged");
+								SecurityStateChanged ss = (SecurityStateChanged) d;
+								System.out.println(ss.getSecurityState());
+								System.out.println(ss.getSummary());
+//								System.out.println(ss.getExplanations().stream().map(a -> a.getDescription())
+//										.collect(Collectors.joining("\n")));
 							}
-							if (Events.NetworkRequestWillBeSent.equals(e)) {
-								RequestWillBeSent s = (RequestWillBeSent) d;
-								if (MixedContentType.Blockable.equals(s.getRequest().getMixedContentType())) {
-									System.out.println(s.getRequest().getUrl());
-									// System.out.println("--"+s.getDocumentURL());
-									if (s.getInitiator() != null&&s.getInitiator().getUrl()!=null) {
-										System.out.println("--" + s.getInitiator().getUrl());
-									}
-									if (s.getInitiator() != null&&s.getInitiator().getStack()!=null) {
-										System.out.println("--" + s.getInitiator().getStack().getCallFrames().stream()
-												.map(a -> a.getUrl()).collect(Collectors.joining("\n*****")));
-									}
-								}
+							if (Events.SecurityCertificateError.equals(e)) {
+								System.out.println("SecurityCertificateError");
+								CertificateError ss = (CertificateError) d;
+								System.out.println(ss.getRequestURL());
+								System.out.println(ss.getErrorType());
 							}
-							if (Events.NetworkResponseReceived.equals(e)) {
-								ResponseReceived rr = (ResponseReceived) d;
-								Response response = rr.getResponse();
-//            					if(ResourceType.Script.equals(rr.getType())
-//            							||ResourceType.XHR.equals(rr.getType())
-//            							||ResourceType.WebSocket.equals(rr.getType())) {
-//            						if(response.getUrl().startsWith("http://")) {
-//            							System.out.println("URL       : " + response.getUrl());
-//            						}
-//            					}
-							}
+
 						});
-						session.navigate("https://fund.jrj.com.cn");
+						session.navigate("https://glink.genius.com.cn/");
 						session.waitDocumentReady();
 						session.wait(3000);
 					}
