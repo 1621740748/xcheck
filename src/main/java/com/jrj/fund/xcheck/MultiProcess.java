@@ -18,9 +18,6 @@
  */
 package com.jrj.fund.xcheck;
 
-import static io.webfolder.cdp.event.Events.NetworkLoadingFinished;
-import static io.webfolder.cdp.event.Events.NetworkRequestWillBeSent;
-import static io.webfolder.cdp.event.Events.NetworkResponseReceived;
 import static io.webfolder.cdp.session.SessionFactory.DEFAULT_PORT;
 import static java.lang.System.getProperty;
 import static java.nio.file.Paths.get;
