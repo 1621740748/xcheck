@@ -102,22 +102,22 @@ public class MultiProcess {
          
         }.start();
 
-//        new Thread() {
-//
-//            public void run() {
-//                Launcher launcher = new Launcher(getFreePort(DEFAULT_PORT));
-//                Path remoteProfileData = get(getProperty("java.io.tmpdir")).resolve("remote-profile-" + new Random().nextInt());
-//                SessionFactory factory = launcher.launch(asList("--user-data-dir=" + remoteProfileData.toString()));
-//
-//                try (SessionFactory sf = factory) {
-//                    try (Session session = sf.create()) {
-//                        session.navigate("https://webfolder.io");
-//                        session.waitDocumentReady();
-//                        System.err.println("Content Length: " + session.getContent().length());
-//                    }
-//                }
-//            }
-//        }.start();
+        new Thread() {
+
+            public void run() {
+                Launcher launcher = new Launcher(getFreePort(DEFAULT_PORT));
+                Path remoteProfileData = get(getProperty("java.io.tmpdir")).resolve("remote-profile-" + new Random().nextInt());
+                SessionFactory factory = launcher.launch(asList("--user-data-dir=" + remoteProfileData.toString()));
+
+                try (SessionFactory sf = factory) {
+                    try (Session session = sf.create()) {
+                        session.navigate("https://www.sina.com");
+                        session.waitDocumentReady();
+                        System.err.println("Content Length: " + session.getContent().length());
+                    }
+                }
+            }
+        }.start();
     }
 
     protected static int getFreePort(int portNumber) {

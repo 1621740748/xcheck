@@ -128,7 +128,7 @@ public class CheckInsecureResources {
 
 	}
 
-	protected static int getFreePort(int portNumber) {
+	protected synchronized static int getFreePort(int portNumber) {
 		try (ServerSocket socket = new ServerSocket(portNumber)) {
 			int freePort = socket.getLocalPort();
 			return freePort;
