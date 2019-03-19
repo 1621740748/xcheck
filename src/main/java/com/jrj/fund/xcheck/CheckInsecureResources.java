@@ -60,7 +60,9 @@ public class CheckInsecureResources {
 					Launcher launcher = new Launcher(getFreePort(DEFAULT_PORT));
 					Path remoteProfileData = get(getProperty("java.io.tmpdir"))
 							.resolve("remote-profile-" + new Random().nextInt());
-					SessionFactory factory = launcher.launch(asList("--disable-gpu", "--allow-running-insecure-content",
+					SessionFactory factory = launcher.launch(asList("--disable-gpu",
+							"--ignore-certificate-errors",
+							"--allow-running-insecure-content",
 							"--user-data-dir=" + remoteProfileData.toString()));
 
 					try (SessionFactory sf = factory) {
