@@ -117,7 +117,7 @@ public class CheckInsecureResources {
 	public static void main(String[] args) {
 		CheckInsecureResources cir = new CheckInsecureResources();
 		// String url="https://fund.jrj.com.cn";
-		String file = "/seeds.txt";
+		String file = "/seeds1.txt";
 		try {
 			List<String> urls = IOUtils.readLines(CheckInsecureResources.class.getResourceAsStream(file), "utf-8");
 			if (urls != null && !urls.isEmpty()) {
