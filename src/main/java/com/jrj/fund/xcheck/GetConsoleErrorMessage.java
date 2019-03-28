@@ -44,6 +44,7 @@ import io.webfolder.cdp.event.log.EntryAdded;
 import io.webfolder.cdp.session.Session;
 import io.webfolder.cdp.session.SessionFactory;
 import io.webfolder.cdp.type.console.ConsoleMessage;
+import io.webfolder.cdp.type.constant.LogEntrySeverity;
 
 /**
  * 获取页面控制台错误消息
@@ -63,28 +64,24 @@ public class GetConsoleErrorMessage {
 					Path remoteProfileData = get(getProperty("java.io.tmpdir"))
 							.resolve("remote-profile-" + new Random().nextInt());
 					//System.out.println(remoteProfileData);
-					SessionFactory factory = launcher.launch(asList("--disable-gpu",
+					SessionFactory factory = launcher.launch(asList(
+							"--disable-gpu",
+							//"--headless",
 							"--ignore-certificate-errors",
-							"--allow-running-insecure-content",
+							//"--allow-running-insecure-content",
 							"--user-data-dir=" + remoteProfileData.toString()));
 
 					try (SessionFactory sf = factory) {
 						try (Session session = sf.create()) {
-							session.getCommand().getNetwork().enable();
-							session.getCommand().getRuntime().enable();
+							//session.getCommand().getNetwork().enable();
+							//session.getCommand().getRuntime().enable();
 							session.getCommand().getLog().enable();
 							session.addEventListener((e, d) -> {
-								if (Events.ConsoleMessageAdded.equals(e)) {
-									MessageAdded mm=(MessageAdded)d;
-									ConsoleMessage m=mm.getMessage();
-									System.out.println("url:"+m.getUrl());
-									System.out.println("source:"+m.getSource());
-									System.out.println("text:"+m.getText());
-									System.out.println("level:"+m.getLevel());
-								}
 								if (Events.LogEntryAdded.equals(e)) {
 									EntryAdded mm=(EntryAdded)d;
-									System.out.println(JSON.toJSONString(mm));
+									if(mm.getEntry().getLevel().equals(LogEntrySeverity.Error)) {
+										System.out.println(JSON.toJSONString(mm));
+									}
 								}
 	
 							});
