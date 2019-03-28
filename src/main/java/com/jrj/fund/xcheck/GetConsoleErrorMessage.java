@@ -39,11 +39,13 @@ import com.alibaba.fastjson.JSON;
 
 import io.webfolder.cdp.Launcher;
 import io.webfolder.cdp.event.Events;
-import io.webfolder.cdp.event.console.MessageAdded;
 import io.webfolder.cdp.event.log.EntryAdded;
+import io.webfolder.cdp.event.runtime.ConsoleAPICalled;
+import io.webfolder.cdp.event.runtime.ExceptionRevoked;
+import io.webfolder.cdp.event.runtime.ExceptionThrown;
 import io.webfolder.cdp.session.Session;
 import io.webfolder.cdp.session.SessionFactory;
-import io.webfolder.cdp.type.console.ConsoleMessage;
+import io.webfolder.cdp.type.constant.ConsoleApiCallType;
 import io.webfolder.cdp.type.constant.LogEntrySeverity;
 
 /**
@@ -74,7 +76,7 @@ public class GetConsoleErrorMessage {
 					try (SessionFactory sf = factory) {
 						try (Session session = sf.create()) {
 							//session.getCommand().getNetwork().enable();
-							//session.getCommand().getRuntime().enable();
+							session.getCommand().getRuntime().enable();
 							session.getCommand().getLog().enable();
 							session.addEventListener((e, d) -> {
 								if (Events.LogEntryAdded.equals(e)) {
@@ -83,7 +85,14 @@ public class GetConsoleErrorMessage {
 										System.out.println(JSON.toJSONString(mm));
 									}
 								}
-	
+								if (Events.RuntimeExceptionRevoked.equals(e)) {
+									ExceptionRevoked mm=(ExceptionRevoked)d;
+									System.out.println(JSON.toJSONString(mm));
+								}	
+								if (Events.RuntimeExceptionThrown.equals(e)) {
+									ExceptionThrown mm=(ExceptionThrown)d;
+									System.out.println(JSON.toJSONString(mm));
+								}	
 							});
 							session.navigate(url);
 							session.waitDocumentReady();
@@ -104,7 +113,7 @@ public class GetConsoleErrorMessage {
 	public static void main(String[] args) {
 		GetConsoleErrorMessage cir = new GetConsoleErrorMessage();
 		// String url="https://fund.jrj.com.cn";
-		String file = "/seeds1.txt";
+		String file = "/seeds3.txt";
 		try {
 			List<String> urls = IOUtils.readLines(GetConsoleErrorMessage.class.getResourceAsStream(file), "utf-8");
 			if (urls != null && !urls.isEmpty()) {
