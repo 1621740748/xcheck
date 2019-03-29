@@ -62,6 +62,7 @@ public class GetConsoleErrorMessage {
 			public void run() {
 				try {
 					smp.acquire();
+					System.out.println(url);
 					Launcher launcher = new Launcher(getFreePort(DEFAULT_PORT));
 					Path remoteProfileData = get(getProperty("java.io.tmpdir"))
 							.resolve("remote-profile-" + new Random().nextInt());
@@ -82,7 +83,7 @@ public class GetConsoleErrorMessage {
 								if (Events.LogEntryAdded.equals(e)) {
 									EntryAdded mm=(EntryAdded)d;
 									if(mm.getEntry().getLevel().equals(LogEntrySeverity.Error)) {
-										System.out.println(JSON.toJSONString(mm));
+										//System.out.println(JSON.toJSONString(mm));
 									}
 								}
 								if (Events.RuntimeExceptionRevoked.equals(e)) {
