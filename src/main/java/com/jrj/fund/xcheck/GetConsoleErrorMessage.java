@@ -70,7 +70,7 @@ public class GetConsoleErrorMessage {
 					SessionFactory factory = launcher.launch(asList(
 							"--disable-gpu",
 							//"--headless",
-							"--ignore-certificate-errors",
+						//	"--ignore-certificate-errors",
 							//"--allow-running-insecure-content",
 							"--user-data-dir=" + remoteProfileData.toString()));
 
@@ -114,7 +114,7 @@ public class GetConsoleErrorMessage {
 	public static void main(String[] args) {
 		GetConsoleErrorMessage cir = new GetConsoleErrorMessage();
 		// String url="https://fund.jrj.com.cn";
-		String file = "/seeds3.txt";
+		String file = "/seeds1.txt";
 		try {
 			List<String> urls = IOUtils.readLines(GetConsoleErrorMessage.class.getResourceAsStream(file), "utf-8");
 			if (urls != null && !urls.isEmpty()) {

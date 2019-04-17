@@ -1,0 +1,6 @@
+443端口没开放，合并域名不存在
+ https://stb.flashdata2.jrj.com.cn/hqstat/stb_stat.js?_=1555490880177 
+ https://stb.hqquery.jrj.com.cn/stbhq.do?ABType=cx&sort=pl&order=DESC&size=10&page=1&vname=cx_hq&_=1555490880177  
+ https://zj.flashdata2.jrj.com.cn/flowhistory/share/300048.js 
+ 证书有问题，合并域名不存在
+ http://mapi.itougu.jrj.com.cn/wireless/view/gettopwhiteviews
