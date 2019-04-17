@@ -114,7 +114,7 @@ public class GetConsoleErrorMessage {
 	public static void main(String[] args) {
 		GetConsoleErrorMessage cir = new GetConsoleErrorMessage();
 		// String url="https://fund.jrj.com.cn";
-		String file = "/seeds1.txt";
+		String file = "/seeds5.txt";
 		try {
 			List<String> urls = IOUtils.readLines(GetConsoleErrorMessage.class.getResourceAsStream(file), "utf-8");
 			if (urls != null && !urls.isEmpty()) {
