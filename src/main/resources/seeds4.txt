@@ -1,10 +1,10 @@
+ https://stock.jrj.com.cn/2019/05/13000027562742.shtml
  https://stock.jrj.com.cn/industry/                                                                                                          
  https://stock.jrj.com.cn/2019/01/15041326903989.shtml                                                                                       
  https://stock.jrj.com.cn/focus/jrjhkt/                                                                                                      
  https://stock.jrj.com.cn/                                                                                                                   
  https://stock.jrj.com.cn/zsw/headline                                                                                                       
- https://stock.jrj.com.cn/bstock/bgzx.shtml                                                                                                  
- https://js.jrjimg.cn/common/foot/v2-simple.js                                                                                               
+ https://stock.jrj.com.cn/bstock/bgzx.shtml                                                                                                                                                                                               
  https://stock.jrj.com.cn/news/2007-09-07/000002649159.html                                                                                  
  https://stock.jrj.com.cn/cominfo/gsgg_300766.htm                                                                                            
  https://stock.jrj.com.cn/focus/jhjhkt025/                                                                                                   
@@ -25,8 +25,7 @@
  https://stock.jrj.com.cn/2015/04/14010419093737.shtml                                                                                       
  https://stock.jrj.com.cn/wxad/index.shtml                                                                                                   
  https://stock.jrj.com.cn/buffett2017/                                                                                                       
- https://stock.jrj.com.cn/ggqx/new/ggqx.shtml                                                                                                
- https://stock.jrj.com.cn/share/603697/block/shareholdersStatistics.js                                                                       
+ https://stock.jrj.com.cn/ggqx/new/ggqx.shtml                                                                                                                                                                      
  https://stock.jrj.com.cn/cominfo/default_300765.htm                                                                                         
  https://stock.jrj.com.cn/xg/hotstock.shtml                                                                                                  
  https://stock.jrj.com.cn/wen/                                                                                                               

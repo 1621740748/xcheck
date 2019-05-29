@@ -70,7 +70,7 @@ public class GetConsoleErrorMessage {
 					SessionFactory factory = launcher.launch(asList(
 							"--disable-gpu",
 							//"--headless",
-						//	"--ignore-certificate-errors",
+							"--ignore-certificate-errors",
 							//"--allow-running-insecure-content",
 							"--user-data-dir=" + remoteProfileData.toString()));
 

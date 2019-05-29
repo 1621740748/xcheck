@@ -3,8 +3,7 @@
  http://stock.jrj.com.cn/focus/jrjhkt/                                                                                                      
  http://stock.jrj.com.cn/                                                                                                                   
  http://stock.jrj.com.cn/zsw/headline                                                                                                       
- http://stock.jrj.com.cn/bstock/bgzx.shtml                                                                                                  
- http://js.jrjimg.cn/common/foot/v2-simple.js                                                                                               
+ http://stock.jrj.com.cn/bstock/bgzx.shtml                                                                                                                                                                                                
  http://stock.jrj.com.cn/news/2007-09-07/000002649159.html                                                                                  
  http://stock.jrj.com.cn/cominfo/gsgg_300766.htm                                                                                            
  http://stock.jrj.com.cn/focus/jhjhkt025/                                                                                                   
@@ -25,8 +24,7 @@
  http://stock.jrj.com.cn/2015/04/14010419093737.shtml                                                                                       
  http://stock.jrj.com.cn/wxad/index.shtml                                                                                                   
  http://stock.jrj.com.cn/buffett2017/                                                                                                       
- http://stock.jrj.com.cn/ggqx/new/ggqx.shtml                                                                                                
- http://stock.jrj.com.cn/share/603697/block/shareholdersStatistics.js                                                                       
+ http://stock.jrj.com.cn/ggqx/new/ggqx.shtml                                                                                                                                                                   
  http://stock.jrj.com.cn/cominfo/default_300765.htm                                                                                         
  http://stock.jrj.com.cn/xg/hotstock.shtml                                                                                                  
  http://stock.jrj.com.cn/wen/                                                                                                               
