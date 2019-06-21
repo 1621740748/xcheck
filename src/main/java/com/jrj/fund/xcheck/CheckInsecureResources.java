@@ -62,7 +62,7 @@ public class CheckInsecureResources {
 							.resolve("remote-profile-" + new Random().nextInt());
 					//System.out.println(remoteProfileData);
 					SessionFactory factory = launcher.launch(asList("--disable-gpu",
-							"--ignore-certificate-errors",
+						//	"--ignore-certificate-errors",
 							"--allow-running-insecure-content",
 							"--user-data-dir=" + remoteProfileData.toString()));
                     System.out.println("---"+url);
@@ -117,7 +117,7 @@ public class CheckInsecureResources {
 	public static void main(String[] args) {
 		CheckInsecureResources cir = new CheckInsecureResources();
 		// String url="https://fund.jrj.com.cn";
-		String file = "/seeds_data.txt";
+		String file = "/seeds_finance.txt";
 		try {
 			List<String> urls = IOUtils.readLines(CheckInsecureResources.class.getResourceAsStream(file), "utf-8");
 			if (urls != null && !urls.isEmpty()) {

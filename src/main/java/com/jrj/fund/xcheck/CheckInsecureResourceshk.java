@@ -31,29 +31,24 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.alibaba.fastjson.JSON;
+import com.jrj.fund.xcheck.bo.BlockedResources;
+import com.jrj.fund.xcheck.dao.BlockedResourcesDao;
+import com.jrj.fund.xcheck.utils.DBUtils;
+import com.jrj.fund.xcheck.utils.UrlUtils;
 
 import io.webfolder.cdp.Launcher;
 import io.webfolder.cdp.event.Events;
-import io.webfolder.cdp.event.log.EntryAdded;
-import io.webfolder.cdp.event.runtime.ConsoleAPICalled;
-import io.webfolder.cdp.event.runtime.ExceptionRevoked;
-import io.webfolder.cdp.event.runtime.ExceptionThrown;
+import io.webfolder.cdp.event.network.RequestWillBeSent;
 import io.webfolder.cdp.session.Session;
 import io.webfolder.cdp.session.SessionFactory;
-import io.webfolder.cdp.type.constant.ConsoleApiCallType;
-import io.webfolder.cdp.type.constant.LogEntrySeverity;
+import io.webfolder.cdp.type.security.MixedContentType;
 
-/**
- * 获取页面控制台错误消息
- * @author huangyan
- *
- */
-public class GetConsoleErrorMessage {
+public class CheckInsecureResourceshk {
 	private static ExecutorService service = Executors.newFixedThreadPool(5);
 	private static Semaphore smp = new Semaphore(1);
 
@@ -62,38 +57,46 @@ public class GetConsoleErrorMessage {
 			public void run() {
 				try {
 					smp.acquire();
-					System.out.println(url);
 					Launcher launcher = new Launcher(getFreePort(DEFAULT_PORT));
 					Path remoteProfileData = get(getProperty("java.io.tmpdir"))
 							.resolve("remote-profile-" + new Random().nextInt());
 					//System.out.println(remoteProfileData);
-					SessionFactory factory = launcher.launch(asList(
-							"--disable-gpu",
-							//"--headless",
-							"--ignore-certificate-errors",
-							//"--allow-running-insecure-content",
+					SessionFactory factory = launcher.launch(asList("--disable-gpu",
+						//	"--ignore-certificate-errors",
+							"--allow-running-insecure-content",
 							"--user-data-dir=" + remoteProfileData.toString()));
-
+                    System.out.println("---"+url);
 					try (SessionFactory sf = factory) {
 						try (Session session = sf.create()) {
-							//session.getCommand().getNetwork().enable();
-							session.getCommand().getRuntime().enable();
-							session.getCommand().getLog().enable();
+							session.getCommand().getNetwork().enable();
 							session.addEventListener((e, d) -> {
-								if (Events.LogEntryAdded.equals(e)) {
-									EntryAdded mm=(EntryAdded)d;
-									if(mm.getEntry().getLevel().equals(LogEntrySeverity.Error)) {
-										//System.out.println(JSON.toJSONString(mm));
+								if (Events.NetworkRequestWillBeSent.equals(e)) {
+									RequestWillBeSent s = (RequestWillBeSent) d;
+									if (MixedContentType.Blockable.equals(s.getRequest().getMixedContentType())) {
+										BlockedResources br = new BlockedResources();
+										br.setResUrl(s.getRequest().getUrl());
+										br.setResHost(UrlUtils.getHost(s.getRequest().getUrl()));
+										br.setResHostPath(UrlUtils.getHostAndPath(s.getRequest().getUrl()));
+										System.out.println(br.getResUrl());
+										if (StringUtils.isNotBlank(s.getDocumentURL())) {
+											br.setPageUrl(s.getDocumentURL());
+										} else {
+											br.setPageUrl("");
+										}
+										if (s.getInitiator() != null && s.getInitiator().getUrl() != null) {
+											br.setInitiateUrl(s.getInitiator().getUrl());
+										} else {
+											if (s.getInitiator() != null && s.getInitiator().getStack() != null) {
+												br.setInitiateUrl(s.getInitiator().getStack().getCallFrames().stream()
+														.map(a -> a.getUrl()).distinct()
+														.collect(Collectors.joining("\n")));
+											}
+										}
+										BlockedResourcesDao brDao = DBUtils.getInstance()
+												.create(BlockedResourcesDao.class);
+										brDao.add(br);
 									}
 								}
-								if (Events.RuntimeExceptionRevoked.equals(e)) {
-									ExceptionRevoked mm=(ExceptionRevoked)d;
-									System.out.println(JSON.toJSONString(mm));
-								}	
-								if (Events.RuntimeExceptionThrown.equals(e)) {
-									ExceptionThrown mm=(ExceptionThrown)d;
-									System.out.println(JSON.toJSONString(mm));
-								}	
 							});
 							session.navigate(url);
 							session.waitDocumentReady();
@@ -112,11 +115,11 @@ public class GetConsoleErrorMessage {
 	}
 
 	public static void main(String[] args) {
-		GetConsoleErrorMessage cir = new GetConsoleErrorMessage();
+		CheckInsecureResourceshk cir = new CheckInsecureResourceshk();
 		// String url="https://fund.jrj.com.cn";
-		String file = "/seeds_data.txt";
+		String file = "/seeds_hk.txt";
 		try {
-			List<String> urls = IOUtils.readLines(GetConsoleErrorMessage.class.getResourceAsStream(file), "utf-8");
+			List<String> urls = IOUtils.readLines(CheckInsecureResourceshk.class.getResourceAsStream(file), "utf-8");
 			if (urls != null && !urls.isEmpty()) {
 				urls.stream().filter(u -> StringUtils.isNotBlank(u)).map(u -> u.trim()).forEach(u -> {
 					cir.checkUrl(u);
