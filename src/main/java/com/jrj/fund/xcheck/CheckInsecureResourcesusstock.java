@@ -62,7 +62,7 @@ public class CheckInsecureResourcesusstock {
 							.resolve("remote-profile-" + new Random().nextInt());
 					//System.out.println(remoteProfileData);
 					SessionFactory factory = launcher.launch(asList("--disable-gpu",
-						s	"--ignore-certificate-errors",
+							"--ignore-certificate-errors",
 							"--allow-running-insecure-content",
 							"--user-data-dir=" + remoteProfileData.toString()));
                     System.out.println("---"+url);
