@@ -48,7 +48,7 @@ import io.webfolder.cdp.session.Session;
 import io.webfolder.cdp.session.SessionFactory;
 import io.webfolder.cdp.type.security.MixedContentType;
 
-public class CheckInsecureResourceshk {
+public class CheckInsecureResourcesusstock {
 	private static ExecutorService service = Executors.newFixedThreadPool(5);
 	private static Semaphore smp = new Semaphore(1);
 
@@ -62,7 +62,7 @@ public class CheckInsecureResourceshk {
 							.resolve("remote-profile-" + new Random().nextInt());
 					//System.out.println(remoteProfileData);
 					SessionFactory factory = launcher.launch(asList("--disable-gpu",
-							"--ignore-certificate-errors",
+						//	"--ignore-certificate-errors",
 							"--allow-running-insecure-content",
 							"--user-data-dir=" + remoteProfileData.toString()));
                     System.out.println("---"+url);
@@ -115,11 +115,11 @@ public class CheckInsecureResourceshk {
 	}
 
 	public static void main(String[] args) {
-		CheckInsecureResourceshk cir = new CheckInsecureResourceshk();
+		CheckInsecureResourcesusstock cir = new CheckInsecureResourcesusstock();
 		// String url="https://fund.jrj.com.cn";
-		String file = "/seeds_hk.txt";
+		String file = "/seeds_usstock.txt";
 		try {
-			List<String> urls = IOUtils.readLines(CheckInsecureResourceshk.class.getResourceAsStream(file), "utf-8");
+			List<String> urls = IOUtils.readLines(CheckInsecureResourcesusstock.class.getResourceAsStream(file), "utf-8");
 			if (urls != null && !urls.isEmpty()) {
 				urls.stream().filter(u -> StringUtils.isNotBlank(u)).map(u -> u.trim()).forEach(u -> {
 					cir.checkUrl(u);
