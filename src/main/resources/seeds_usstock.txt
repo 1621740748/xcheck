@@ -11,5 +11,6 @@ https://usstock.jrj.com.cn
 https://usstock.jrj.com.cn/2015/01/02232118638566.shtml
 https://usstock.jrj.com.cn/2015/03/12230918956726.shtml
 https://usstock.jrj.com.cn/buffett2019/
+https://js.jrjimg.cn/common/foot/amStockFc-min.js
 https://usstock.jrj.com.cn/2013/06/01090415358199.shtml
 https://usstock.jrj.com.cn/mgzx.shtml
